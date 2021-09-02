@@ -49,7 +49,7 @@ build_shell_validate_image:
 .PHONY: build_binary_native_image
 build_binary_native_image:
 	# build dockerfile from stdin so that we don't send the build-context; source is bind-mounted in the development environment
-	cat ./dockerfiles/Dockerfile.binary-native | docker build --build-arg=GO_VERSION -t $(BINARY_NATIVE_IMAGE_NAME) -
+	cat ./dockerfiles/Dockerfile.binary-native | docker build --network host --build-arg=GO_VERSION -t $(BINARY_NATIVE_IMAGE_NAME) -
 
 .PHONY: build_e2e_image
 build_e2e_image:

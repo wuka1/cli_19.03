@@ -496,7 +496,8 @@ type serviceOptions struct {
 	credentialSpec  credentialSpecOpt
 	init            bool
 	stopSignal      string
-	tty             bool
+	privileged      bool
+        tty             bool
 	readOnly        bool
 	mounts          opts.MountOpt
 	dns             opts.ListOpts
@@ -646,7 +647,8 @@ func (options *serviceOptions) ToService(ctx context.Context, apiClient client.N
 				Groups:     options.groups.GetAll(),
 				StopSignal: options.stopSignal,
 				TTY:        options.tty,
-				ReadOnly:   options.readOnly,
+				Privileged: options.privileged,
+                                ReadOnly:   options.readOnly,
 				Mounts:     options.mounts.Value(),
 				Init:       &options.init,
 				DNSConfig: &swarm.DNSConfig{
@@ -823,6 +825,9 @@ func addServiceFlags(flags *pflag.FlagSet, opts *serviceOptions, defaultFlagValu
 	flags.SetAnnotation(flagHealthStartPeriod, "version", []string{"1.29"})
 	flags.BoolVar(&opts.healthcheck.noHealthcheck, flagNoHealthcheck, false, "Disable any container-specified HEALTHCHECK")
 	flags.SetAnnotation(flagNoHealthcheck, "version", []string{"1.25"})
+        
+        flags.BoolVar(&opts.privileged, flagPrivileged, false, "Give extended privileges to the service")
+        flags.SetAnnotation(flagPrivileged, "version", []string{"1.35"})
 
 	flags.BoolVarP(&opts.tty, flagTTY, "t", false, "Allocate a pseudo-TTY")
 	flags.SetAnnotation(flagTTY, "version", []string{"1.25"})
@@ -889,7 +894,8 @@ const (
 	flagPublish                 = "publish"
 	flagPublishRemove           = "publish-rm"
 	flagPublishAdd              = "publish-add"
-	flagQuiet                   = "quiet"
+	flagPrivileged              = "privileged"
+        flagQuiet                   = "quiet"
 	flagReadOnly                = "read-only"
 	flagReplicas                = "replicas"
 	flagReserveCPU              = "reserve-cpu"
